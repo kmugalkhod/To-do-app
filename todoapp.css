@@ -1,0 +1,550 @@
+*{
+  padding: 0%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Gill Sans';
+}
+
+
+
+/* Main background and subtle shadow for main panel */
+#main {
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(120deg, #f8fafc 0%, #fbeee6 100%);
+  display: flex;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.08);
+  border-radius: 18px;
+  margin: 18px auto;
+  max-width: 1100px;
+  min-height: 700px;
+}
+
+/* Side panel with soft shadow and rounded corners */
+#sidepanel {
+  height: 100%;
+  width: 18%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px 0 0 18px;
+  box-shadow: 2px 0 16px rgba(44,62,80,0.06);
+  border-right: 1.5px solid #f3e9e2;
+}
+
+/* Top panel with more padding and a soft divider */
+#sidetoppanel {
+  background: #fff;
+  height: 70px;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  padding: 0 22px;
+  gap: 18px;
+  border-bottom: 1.5px solid #f3e9e2;
+}
+
+.sidetoppanel-email {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e74c3c;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+}
+
+.sidetoppanel-email:hover {
+  overflow: visible;
+  white-space: normal;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: absolute;
+  z-index: 10;
+  padding: 4px 8px;
+  border-radius: 4px;
+  left: 16px;
+  max-width: 300px;
+}
+
+.sidetoppanel-icon {
+  margin-left: 8px;
+  margin-right: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #e74c3c;
+  background: #fbeee6;
+  border-radius: 50%;
+  padding: 7px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidetoppanel-icon:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.sidetoppanel-email-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+}
+
+.dropdown-icon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+  color: #888;
+  transition: color 0.2s;
+}
+
+.dropdown-icon:hover {
+  color: #333;
+}
+
+.email-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  min-width: 140px;
+  z-index: 100;
+  flex-direction: column;
+}
+
+.email-dropdown-menu.show {
+  display: flex;
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #f0f0f0;
+}
+
+.email-dropdown-menu .dropdown-separator {
+  height: 1px;
+  background: #eee;
+  margin: 4px 0;
+  width: 100%;
+}
+
+/* ...existing code... */
+#sidebottomppanel {
+  display: flex;
+  align-items: center;
+  padding: 20px 0 20px 16px; /* Top, right, bottom, left */
+}
+
+.add-task-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 20px 8px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-task-btn:hover {
+  background: #c0392b;
+}
+
+.add-task-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+}
+
+.add-task-btn-text {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, #e74c3c 60%, #fbeee6 100%);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 28px 10px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.08);
+  margin-top: 18px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.add-task-btn-text:hover {
+  background: linear-gradient(90deg, #c0392b 60%, #fbeee6 100%);
+  box-shadow: 0 4px 16px rgba(231,76,60,0.13);
+}
+
+.add-task-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.add-task-text {
+  color:#d1453b;
+  font-size: 16px;
+  font-weight: 600;
+  padding-left: 16px;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.25);
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal.show {
+  display: flex;
+}
+
+/* Remove extra gap from modal-content since header is gone */
+.modal-content {
+  background: #fff;
+  padding: 36px 32px 28px 32px;
+  border-radius: 18px;
+  min-width: 360px;
+  min-height: 200px;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.12), 0 1.5px 6px rgba(231,76,60,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: popIn 0.2s;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.97); opacity: 0.7; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.close-modal {
+  position: absolute;
+  right: 22px;
+  top: 16px;
+  font-size: 28px;
+  color: #bbb;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.15s;
+  font-weight: bold;
+  line-height: 1;
+}
+.close-modal:hover {
+  color: #e74c3c;
+  transform: scale(1.2) rotate(90deg);
+}
+
+.modal-content h2 {
+  margin: 0 0 8px 0;
+  font-size: 22px;
+  color: #e74c3c;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+/* Description input: normal color and opacity when typing */
+.desc-input {
+  width: 100%;
+  min-height: 60px;
+  border: 1.5px solid #eee;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 16px;
+  color: #444;        /* normal text color */
+  opacity: 1;         /* not muted */
+  resize: vertical;
+  background: #fafbfc;
+  transition: border 0.2s, box-shadow 0.2s;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(44,62,80,0.03);
+}
+.desc-input::placeholder {
+  color: #888;
+  opacity: 0.7;
+}
+.desc-input:focus {
+  border: 1.5px solid #e74c3c;
+  outline: none;
+  background: #fff;
+  color: #222;        /* even darker on focus */
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.10);
+}
+
+.date-input {
+  font-size: 16px;
+  padding: 9px 14px;
+  border-radius: 9px;
+  border: 1.5px solid #eee;
+  color: #555;
+  background: #f7f7f7;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(44,62,80,0.03);
+}
+.date-input:focus {
+  border: 1.5px solid #e74c3c;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.10);
+}
+
+.modal-add-btn {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 8px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.07);
+}
+.modal-add-btn:hover {
+  background: #c0392b;
+  box-shadow: 0 4px 16px rgba(231,76,60,0.13);
+}
+.modal-add-btn.cancel {
+  background: #bbb;
+  color: #fff;
+}
+.modal-add-btn.cancel:hover {
+  background: #888;
+}
+
+/* Task panel with soft background and rounded corners */
+#taskPanel {
+  height: 100%;
+  width: 82%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 18px 18px 0;
+  box-shadow: 0 2px 16px rgba(44,62,80,0.04);
+  overflow: hidden;
+}
+
+/* Top bar for tasks */
+.top {
+  background: #fff;
+  height: 70px;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  padding: 0 24px;
+  gap: 18px;
+  border-bottom: 1.5px solid #f3e9e2;
+}
+
+/* Task date heading and HR */
+.task-date-heading {
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 28px;
+  margin-bottom: 4px;
+  color: #e74c3c;
+  letter-spacing: 0.5px;
+}
+.task-date-hr {
+  border: none;
+  border-top: 2px solid #fbeee6;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+/* Task item styling */
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 0;
+  border-radius: 10px;
+  background: #f8fafc;
+  margin-bottom: 10px;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+  border: 1.5px solid #fbeee6;
+  transition: background 0.2s, box-shadow 0.2s, border 0.2s;
+}
+.task-item:hover {
+  background: #fbeee6;
+  border: 1.5px solid #e74c3c;
+  box-shadow: 0 4px 16px rgba(231,76,60,0.09);
+}
+
+.task-checkbox {
+  accent-color: #e74c3c;
+  width: 20px;
+  height: 20px;
+}
+
+.task-desc {
+  flex: 1;
+  color: #333;
+  font-size: 15px;
+  word-break: break-word;
+  font-weight: 500;
+  transition: color 0.2s, text-decoration 0.2s, opacity 0.2s;
+}
+.task-checkbox:checked + .task-desc {
+  text-decoration: line-through;
+  opacity: 0.6;
+  color: #888;
+}
+
+/* Modal improvements */
+.modal-content {
+  background: #fff;
+  padding: 36px 32px 28px 32px;
+  border-radius: 18px;
+  min-width: 360px;
+  min-height: 200px;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.12), 0 1.5px 6px rgba(231,76,60,0.08);
+  gap: 16px;
+}
+
+.close-modal {
+  right: 22px;
+  top: 16px;
+  font-size: 28px;
+}
+
+.desc-input {
+  min-height: 70px;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 14px 16px;
+}
+
+.date-input {
+  font-size: 16px;
+  padding: 9px 14px;
+  border-radius: 9px;
+}
+
+.modal-add-btn {
+  border-radius: 9px;
+  padding: 11px 32px;
+  font-size: 16px;
+}
+
+/* Scrollbar styling for task panel */
+#bottomtaskPanel {
+  padding-left: 24px;
+  padding-right: 16px;
+  padding-top: 18px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e74c3c #fbeee6;
+  max-height: calc(100vh - 120px);
+}
+#bottomtaskPanel::-webkit-scrollbar {
+  width: 7px;
+  background: #fbeee6;
+  border-radius: 8px;
+}
+#bottomtaskPanel::-webkit-scrollbar-thumb {
+  background: #e74c3c;
+  border-radius: 8px;
+  opacity: 0.7;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 900px) {
+  #main {
+    flex-direction: column;
+    min-width: 320px;
+    max-width: 98vw;
+    border-radius: 0;
+    margin: 0;
+  }
+  #sidepanel, #taskPanel {
+    width: 100%;
+    border-radius: 0;
+    min-width: 0;
+  }
+  #sidepanel {
+    flex-direction: row;
+    height: 70px;
+    border-right: none;
+    border-bottom: 1.5px solid #f3e9e2;
+  }
+  #sidetoppanel {
+    flex: 1;
+    border-bottom: none;
+    border-right: 1.5px solid #f3e9e2;
+    height: 100%;
+    padding: 0 10px;
+  }
+  #sidebottomppanel {
+    flex: 1;
+    padding: 0 10px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  #taskPanel {
+    min-height: 400px;
+  }
+}
+
+/* Edit task button styles */
+.edit-task-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+}
+.edit-task-btn:hover {
+  background: #fbeee6;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.07);
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="todoapp.css" />
+</head>
+
+<body>
+
+  <div id="main">
+    <div id="sidepanel">
+
+      <div id="sidetoppanel">
+        <div class="sidetoppanel-email-dropdown">
+          <span class="sidetoppanel-email" title="Kunalmugalkhod007@gmail.com">
+            Kunalmugalkhod007@gmail.com
+          </span>
+          <span class="dropdown-icon" id="emailDropdownBtn" title="Open menu">
+            <!-- Down arrow SVG -->
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </span>
+          <div class="email-dropdown-menu" id="emailDropdownMenu">
+            <div class="dropdown-item" id="showFullEmail">Kunalmugalkhod007@gmail.com</div>
+            <div class="dropdown-separator"></div>
+            <div class="dropdown-item" id="logoutBtn">Log out</div>
+          </div>
+        </div>
+        <div class="sidetoppanel-icon" title="Notifications">
+          <!-- Bell SVG icon -->
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V4a2 2 0 1 0-4 0v1.341C7.67 7.165 6 9.388 6 12v2.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
+          </svg>
+        </div>
+        <div class="sidetoppanel-icon" title="Collapse">
+          <!-- Collapsible (chevron) SVG icon -->
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div id="sidebottomppanel">
+        
+          <button class="add-task-btn-text">
+
+            <span class="add-task-icon-circle">
+              <!-- Plus icon in red circle -->
+              <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+                <circle cx="14" cy="14" r="14" fill="#e74c3c" />
+                <line x1="14" y1="8" x2="14" y2="20" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <line x1="8" y1="14" x2="20" y2="14" stroke="white" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="add-task-text">Add Task</span>
+          </button>
+        
+      </div>
+
+    </div>
+    <div id="taskPanel">
+      <div class="top">
+      
+      </div>
+      <div id="bottomtaskPanel">
+      
+      </div>
+      
+    </div>
+  </div>
+
+  </div>
+
+  <!-- Add Task Dialog -->
+<div id="addTaskModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" id="closeModalBtn">&times;</span>
+    <textarea id="taskDescription" placeholder="Description" class="desc-input"></textarea>
+    <div class="modal-actions">
+      <input type="date" id="taskDate" class="date-input" />
+      <button id="addTaskConfirmBtn" class="modal-add-btn">Add Task</button>
+    </div>
+  </div>
+</div>
+
+  <script src="todoapp.js" />
+</body>
+
+</html>
