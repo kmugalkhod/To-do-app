@@ -1,8 +1,10 @@
 import React from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { DeviceProvider } from './src/context/DeviceContext';
 
 // Screens
@@ -18,7 +20,20 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'tv' : 'tv-outline';
+          } else if (route.name === 'Remote') {
+            iconName = focused ? 'game-controller' : 'game-controller-outline';
+          } else {
+            iconName = focused ? 'settings' : 'settings-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#8E8E93',
         tabBarStyle: {
@@ -29,7 +44,7 @@ function MainTabs() {
           backgroundColor: '#1C1C1E',
         },
         headerTintColor: '#FFFFFF',
-      }}
+      })}
     >
       <Tab.Screen
         name="Home"
@@ -59,7 +74,7 @@ function MainTabs() {
   );
 }
 
-function App(): React.JSX.Element {
+export default function App() {
   return (
     <SafeAreaProvider>
       <DeviceProvider>
@@ -89,9 +104,8 @@ function App(): React.JSX.Element {
             />
           </Stack.Navigator>
         </NavigationContainer>
+        <StatusBar style="light" />
       </DeviceProvider>
     </SafeAreaProvider>
   );
 }
-
-export default App;

@@ -7,6 +7,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDeviceContext, Device } from '../context/DeviceContext';
@@ -17,6 +21,8 @@ export default function DeviceDiscoveryScreen() {
   const { state, dispatch } = useDeviceContext();
   const [foundDevices, setFoundDevices] = useState<Device[]>([]);
   const [isScanning, setIsScanning] = useState(false);
+  const [showManualModal, setShowManualModal] = useState(false);
+  const [manualIP, setManualIP] = useState('');
 
   useEffect(() => {
     startScan();
@@ -71,35 +77,25 @@ export default function DeviceDiscoveryScreen() {
     );
   };
 
-  const addManualDevice = () => {
-    Alert.prompt(
-      'Add Device Manually',
-      'Enter the IP address of your Toshiba TV:',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Add',
-          onPress: (ip) => {
-            if (ip && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) {
-              const manualDevice: Device = {
-                id: `manual-${ip}`,
-                name: 'Toshiba TV',
-                type: 'toshiba',
-                ip: ip,
-                port: 55000,
-                isPaired: true,
-              };
-              dispatch({ type: 'ADD_DEVICE', payload: manualDevice });
-              dispatch({ type: 'SET_ACTIVE_DEVICE', payload: manualDevice });
-              navigation.navigate('Main', { screen: 'Remote' });
-            } else {
-              Alert.alert('Invalid IP', 'Please enter a valid IP address.');
-            }
-          },
-        },
-      ],
-      'plain-text'
-    );
+  const handleAddManualDevice = () => {
+    const ip = manualIP.trim();
+    if (ip && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) {
+      const manualDevice: Device = {
+        id: `manual-${ip}`,
+        name: 'Toshiba TV',
+        type: 'toshiba',
+        ip: ip,
+        port: 55000,
+        isPaired: true,
+      };
+      dispatch({ type: 'ADD_DEVICE', payload: manualDevice });
+      dispatch({ type: 'SET_ACTIVE_DEVICE', payload: manualDevice });
+      setShowManualModal(false);
+      setManualIP('');
+      navigation.navigate('Main', { screen: 'Remote' });
+    } else {
+      Alert.alert('Invalid IP', 'Please enter a valid IP address (e.g., 192.168.1.100)');
+    }
   };
 
   const renderDevice = ({ item }: { item: Device }) => {
@@ -189,7 +185,7 @@ export default function DeviceDiscoveryScreen() {
 
         <TouchableOpacity
           style={[styles.actionButton, styles.actionButtonSecondary]}
-          onPress={addManualDevice}
+          onPress={() => setShowManualModal(true)}
         >
           <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>
             Add Manually
@@ -201,6 +197,52 @@ export default function DeviceDiscoveryScreen() {
       <Text style={styles.helpText}>
         Tip: Your Toshiba TV must have network control enabled. Check your TV's network settings.
       </Text>
+
+      {/* Manual Add Modal */}
+      <Modal
+        visible={showManualModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowManualModal(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add Device Manually</Text>
+            <Text style={styles.modalSubtitle}>
+              Enter the IP address of your Toshiba TV
+            </Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="192.168.1.100"
+              placeholderTextColor="#8E8E93"
+              value={manualIP}
+              onChangeText={setManualIP}
+              keyboardType="numeric"
+              autoFocus
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => {
+                  setShowManualModal(false);
+                  setManualIP('');
+                }}
+              >
+                <Text style={styles.modalButtonCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonAdd]}
+                onPress={handleAddManualDevice}
+              >
+                <Text style={styles.modalButtonAddText}>Add</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
@@ -352,5 +394,68 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 20,
     paddingBottom: 20,
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 340,
+  },
+  modalTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    color: '#8E8E93',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalInput: {
+    backgroundColor: '#2C2C2E',
+    borderRadius: 10,
+    padding: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalButtonCancel: {
+    backgroundColor: '#3A3A3C',
+  },
+  modalButtonCancelText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalButtonAdd: {
+    backgroundColor: '#007AFF',
+  },
+  modalButtonAddText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

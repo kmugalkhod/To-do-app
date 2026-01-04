@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Platform,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useDeviceContext } from '../context/DeviceContext';
 import TVRemoteService from '../services/TVRemoteService';
 
@@ -26,6 +28,11 @@ export default function RemoteScreen() {
     if (!state.activeDevice) {
       Alert.alert('No Device', 'Please select a device from the Devices tab first.');
       return;
+    }
+
+    // Haptic feedback on button press
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
     setLastPressed(buttonId);
