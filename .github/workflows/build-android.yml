@@ -1,0 +1,39 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:  # Manual trigger from GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: RemoteControlApp/package-lock.json
+
+      - name: Install dependencies
+        working-directory: RemoteControlApp
+        run: npm ci
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build APK
+        working-directory: RemoteControlApp
+        run: eas build --platform android --profile preview --non-interactive
+
+      - name: Get build URL
+        working-directory: RemoteControlApp
+        run: |
+          echo "Build complete! Check your Expo dashboard for the APK download link."
+          echo "Visit: https://expo.dev/accounts/YOUR_USERNAME/projects/remote-control-app/builds"
