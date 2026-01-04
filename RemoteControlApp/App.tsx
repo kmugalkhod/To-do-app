@@ -4,10 +4,10 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   Alert,
   TextInput,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
@@ -22,7 +22,7 @@ export default function App() {
       return;
     }
     setIsConnected(true);
-    setStatus(`Connected to ${tvIP}`);
+    setStatus('Connected to ' + tvIP);
   };
 
   const sendCommand = async (command: string) => {
@@ -31,19 +31,12 @@ export default function App() {
       return;
     }
 
-    setStatus(`Sending: ${command}`);
+    setStatus('Sending: ' + command);
 
-    const soapBody = `<?xml version="1.0" encoding="utf-8"?>
-<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-  <s:Body>
-    <u:X_SendKey xmlns:u="urn:panasonic-com:service:p00NetworkControl:1">
-      <X_KeyEvent>${command}</X_KeyEvent>
-    </u:X_SendKey>
-  </s:Body>
-</s:Envelope>`;
+    const soapBody = '<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:X_SendKey xmlns:u="urn:panasonic-com:service:p00NetworkControl:1"><X_KeyEvent>' + command + '</X_KeyEvent></u:X_SendKey></s:Body></s:Envelope>';
 
     try {
-      await fetch(`http://${tvIP}:55000/nrc/control_0`, {
+      await fetch('http://' + tvIP + ':55000/nrc/control_0', {
         method: 'POST',
         headers: {
           'Content-Type': 'text/xml; charset="utf-8"',
@@ -51,9 +44,9 @@ export default function App() {
         },
         body: soapBody,
       });
-      setStatus(`Sent: ${command}`);
-    } catch (error) {
-      setStatus(`Error sending command`);
+      setStatus('Sent: ' + command);
+    } catch (e) {
+      setStatus('Error sending command');
     }
   };
 
@@ -61,121 +54,140 @@ export default function App() {
     <TouchableOpacity
       style={styles.button}
       onPress={() => sendCommand(command)}
+      activeOpacity={0.7}
     >
       <Text style={styles.buttonText}>{label}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.title}>Toshiba Remote</Text>
 
         {!isConnected ? (
           <View style={styles.connectSection}>
+            <Text style={styles.label}>TV IP Address:</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter TV IP (e.g. 192.168.1.100)"
-              placeholderTextColor="#888"
+              placeholder="192.168.1.100"
+              placeholderTextColor="#666"
               value={tvIP}
               onChangeText={setTvIP}
-              keyboardType="numeric"
+              keyboardType="decimal-pad"
+              autoCapitalize="none"
+              autoCorrect={false}
             />
             <TouchableOpacity style={styles.connectButton} onPress={connectToTV}>
               <Text style={styles.connectButtonText}>Connect</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <>
+          <View style={styles.remoteSection}>
             <Text style={styles.status}>{status}</Text>
 
-            {/* Power */}
             <View style={styles.row}>
-              <RemoteButton label="⏻ Power" command="NRC_POWER-ONOFF" />
+              <RemoteButton label="Power" command="NRC_POWER-ONOFF" />
             </View>
 
-            {/* Navigation */}
             <View style={styles.row}>
-              <RemoteButton label="▲" command="NRC_UP-ONOFF" />
+              <RemoteButton label="UP" command="NRC_UP-ONOFF" />
             </View>
             <View style={styles.row}>
-              <RemoteButton label="◀" command="NRC_LEFT-ONOFF" />
+              <RemoteButton label="LEFT" command="NRC_LEFT-ONOFF" />
               <RemoteButton label="OK" command="NRC_ENTER-ONOFF" />
-              <RemoteButton label="▶" command="NRC_RIGHT-ONOFF" />
+              <RemoteButton label="RIGHT" command="NRC_RIGHT-ONOFF" />
             </View>
             <View style={styles.row}>
-              <RemoteButton label="▼" command="NRC_DOWN-ONOFF" />
+              <RemoteButton label="DOWN" command="NRC_DOWN-ONOFF" />
             </View>
 
-            {/* Volume & Menu */}
             <View style={styles.row}>
-              <RemoteButton label="Vol -" command="NRC_VOLDOWN-ONOFF" />
+              <RemoteButton label="Vol-" command="NRC_VOLDOWN-ONOFF" />
               <RemoteButton label="Mute" command="NRC_MUTE-ONOFF" />
-              <RemoteButton label="Vol +" command="NRC_VOLUP-ONOFF" />
+              <RemoteButton label="Vol+" command="NRC_VOLUP-ONOFF" />
             </View>
 
             <View style={styles.row}>
               <RemoteButton label="Home" command="NRC_HOME-ONOFF" />
               <RemoteButton label="Back" command="NRC_RETURN-ONOFF" />
-              <RemoteButton label="Menu" command="NRC_MENU-ONOFF" />
             </View>
 
-            {/* Disconnect */}
             <TouchableOpacity
               style={styles.disconnectButton}
-              onPress={() => setIsConnected(false)}
+              onPress={() => {
+                setIsConnected(false);
+                setStatus('Enter your TV IP address');
+              }}
             >
               <Text style={styles.disconnectText}>Disconnect</Text>
             </TouchableOpacity>
-          </>
+          </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#121212',
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
   },
   content: {
     padding: 20,
     alignItems: 'center',
+    minHeight: '100%',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
+    color: '#ffffff',
+    marginBottom: 30,
+  },
+  label: {
+    color: '#aaaaaa',
+    fontSize: 16,
+    marginBottom: 10,
   },
   status: {
-    color: '#888',
-    marginBottom: 20,
+    color: '#888888',
+    marginBottom: 25,
+    fontSize: 14,
   },
   connectSection: {
     width: '100%',
     alignItems: 'center',
   },
+  remoteSection: {
+    width: '100%',
+    alignItems: 'center',
+  },
   input: {
-    backgroundColor: '#222',
-    color: '#fff',
+    backgroundColor: '#2a2a2a',
+    color: '#ffffff',
     padding: 15,
     borderRadius: 10,
     width: '100%',
-    fontSize: 16,
-    marginBottom: 15,
+    fontSize: 18,
+    marginBottom: 20,
     textAlign: 'center',
+    borderWidth: 1,
+    borderColor: '#444444',
   },
   connectButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
+    backgroundColor: '#0a84ff',
+    padding: 16,
     borderRadius: 10,
     width: '100%',
   },
   connectButtonText: {
-    color: '#fff',
+    color: '#ffffff',
     textAlign: 'center',
     fontSize: 18,
     fontWeight: '600',
@@ -183,28 +195,29 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 5,
+    marginVertical: 6,
   },
   button: {
-    backgroundColor: '#333',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    backgroundColor: '#3a3a3a',
+    width: 75,
+    height: 75,
+    borderRadius: 38,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 5,
+    marginHorizontal: 8,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#ffffff',
+    fontSize: 14,
     fontWeight: '600',
+    textAlign: 'center',
   },
   disconnectButton: {
-    marginTop: 30,
+    marginTop: 40,
     padding: 15,
   },
   disconnectText: {
-    color: '#FF3B30',
+    color: '#ff453a',
     fontSize: 16,
   },
 });
